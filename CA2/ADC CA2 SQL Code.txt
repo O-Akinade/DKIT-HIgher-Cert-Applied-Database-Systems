@@ -1,0 +1,46 @@
+1) SELECT COUNT(customerNumber) FROM `customers`;
+
+2) SELECT officeCode, COUNT(employeeNumber) FROM `employees` GROUP BY officeCode;
+
+3) SELECT orderDetailsNumber, quantityOrdered FROM orderdetails ORDER BY quantityOrdered DESC LIMIT 10;
+
+4) SELECT payments.customerNumber,SUM(payments.amount), customers.customerName FROM payments AS payments INNER JOIN customers ON payments.customerNumber = customers.customerNumber GROUP By payments.customerNumber
+
+5) SELECT SUM(payments.amount), customers.country FROM payments AS payments INNER JOIN customers ON payments.customerNumber = customers.customerNumber GROUP By customers.country
+
+6) #SELECT AVG(MSRP)FROM products; SELECT productCode,productName, productLine,MSRP FROM products WHERE MSRP > (SELECT (AVG(MSRP))FROM products);
+
+7) SELECT COUNT(IF(productName LIKE "%Ford%", 1,null))/ COUNT(productName) FROM products;
+
+8) SET @MinMsrp = 89;
+   SET @MaxMsrp = 200;
+   SELECT productName, productCode, productDescription, buyPrice FROM products 
+   WHERE MSRP >= @MinMsrp  AND MSRP <= @MaxMsrp 
+   ORDER BY products.buyPrice ASC;
+
+9) CREATE TEMPORARY TABLE customers_orderDetails SELECT customers.customerName,customers.customerNumber,orders.orderNumber,orderdetails.orderDetailsNumber,orderdetails.priceEach,orderdetails.quantityOrdered,
+   orderdetails.priceEach*orderdetails.quantityOrdered AS total_price FROM customers 
+   INNER JOIN orders ON orders.customerNumber = customers.customerNumber 
+   INNER JOIN orderdetails ON orderdetails.orderNumber = orders.orderNumber;
+   
+   CREATE TEMPORARY TABLE customers_totalOrders
+   SELECT customers_orderDetails.customerName,customers_orderDetails.customerNumber, SUM(customers_orderDetails.total_price) AS total_own FROM customers_orderDetails
+   GROUP BY customers_orderDetails.customerNumber;
+   
+   CREATE TEMPORARY TABLE customers_payments
+   SELECT customers.customerName,customers.customerNumber, SUM(payments.amount) AS total_payment FROM customers
+   INNER JOIN payments ON payments.customerNumber = customers.customerNumber
+   GROUP BY customers.customerNumber;
+
+   SELECT customers.customerName, customers.customerNumber, customers_totalOrders.total_own, customers_payments.total_payment, customers_totalOrders.total_own-customers_payments.total_payment AS balance FROM customers
+   INNER JOIN  customers_totalOrders ON customers.customerNumber = customers_totalOrders.customerNumber
+   INNER JOIN customers_payments ON customers_totalOrders.customerNumber = customers_payments.customerNumber;
+
+   using Right JOIN t ofind the 98 customer out of 122 that have made orders
+   SELECT customers.customerName,customers.customerNumber, orders.orderNumber FROM orders
+   RIGHT JOIN customers ON  customers.customerNumber = orders.customerNumber
+   GROUP BY customerNumber;
+   ORDER BY `orders`.`orderNumber` ASC
+
+10) SELECT products.productCode, orderdetails.quantityOrdered, products.productName FROM orderdetails RIGHT JOIN products ON products.productCode = orderdetails.productCode GROUP By products.productCode;
+    LEFT JOIN takes out 1985 Toyota Supra while RIGHT JOIN showes it but with a Null value for orderdetails.quantityOrdered
