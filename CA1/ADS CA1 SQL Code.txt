@@ -1,0 +1,21 @@
+1) SELECT grandslamdata.Winner, grandslamdata.Year FROM grandslamdata WHERE Year > "1960";
+
+2) SELECT winner,winner_nationality, COUNT(winner) FROM grandslamdata2csv WHERE winner_nationality = "USA" GROUP BY winner ORDER BY grandslamdata2csv.winner ASC;
+
+3) SELECT AVG(winner_seed),AVG(runner_up_seed) FROM grandslamdata2csv WHERE tournament = "F";
+
+4) SELECT COUNT(winner) FROM grandslamdata2csv WHERE winner_seed < 5 AND tournament = "U";
+
+5) SELECT winner, COUNT(winner) FROM grandslamdata2csv WHERE tournament = "W" GROUP BY winner;
+
+6) SELECT winner, COUNT(winner) FROM grandslamdata2csv GROUP BY winner ORDER BY COUNT(winner) DESC LIMIT 10;
+
+7) SELECT winner_nationality, COUNT(winner_nationality) FROM grandslamdata2csv WHERE year > "1950" GROUP BY winner_nationality ORDER BY COUNT(winner_nationality) DESC;
+
+8) SELECT COUNT(IF(tournament = "F" AND winner_seed > "16", 1,null))/ COUNT(IF(tournament= "F", 1, null)) FROM grandslamdata2csv;
+
+9) SELECT COUNT(IF(score LIKE "%7%", 1,null))/ COUNT(score) FROM grandslamdata2csv;
+
+10) SELECT tournament, year,COUNT(winner), winner, winner_seed FROM grandslamdata2csv WHERE winner_seed > (SELECT (AVG(winner_seed))FROM grandslamdata2csv) GROUP BY winner;
+
+11) SELECT Concat(winner, runner_up) AS "Winner_Runner_Comb", COUNT(Concat(winner, runner_up)) FROM grandslamdata2csv GROUP By (Concat(winner, runner_up)) ORDER BY COUNT(Concat(winner, runner_up)) DESC
